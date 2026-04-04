@@ -4,6 +4,7 @@
 void initBuffer(Buffer *b);
 int pushBuffer(Buffer *b,float Value);
 int popBuffer(Buffer *b, float *Value);
-int isBufferFull(Buffer *b);//void?
+int isBufferFull(Buffer *b);
+int isBufferEmpty(Buffer *b);
 #endif
 
