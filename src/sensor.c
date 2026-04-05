@@ -4,13 +4,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+
 #define ERROR_VALUE -9999.0f
 
-/* đọc config*/
+/* đọc config */
 int readConfig(const char* filename, Sensor sensors[], int* numSensors) {
     FILE* f = fopen(filename, "r");
     if (f == NULL) {
-        return -1; 
+        return -1;
     }
 
     char line[256];
@@ -26,7 +27,9 @@ int readConfig(const char* filename, Sensor sensors[], int* numSensors) {
         float threshold;
         char type_buf[50] = { 0 }, loc_buf[50] = { 0 };
 
-        int thong_so_doc_duoc = sscanf(line, "%d %s %f %d %s", &id, type_buf, &threshold, &period, loc_buf);
+        /* giới hạn độ dài chuỗi để tránh tràn */
+        int thong_so_doc_duoc = sscanf(line, "%d %49s %f %d %49s",
+            &id, type_buf, &threshold, &period, loc_buf);
 
         if (thong_so_doc_duoc != 5) {
             continue;
@@ -37,35 +40,29 @@ int readConfig(const char* filename, Sensor sensors[], int* numSensors) {
         }
 
         sensors[count].id = id;
-        strcpy(sensors[count].type, type_buf);
-        strcpy(sensors[count].location, loc_buf);
 
-        if (threshold > 0.0) {
+        /* copy an toàn */
+        strncpy(sensors[count].type, type_buf, sizeof(sensors[count].type) - 1);
+        sensors[count].type[sizeof(sensors[count].type) - 1] = '\0';
+
+        strncpy(sensors[count].location, loc_buf, sizeof(sensors[count].location) - 1);
+        sensors[count].location[sizeof(sensors[count].location) - 1] = '\0';
+
+        if (threshold > 0.0f) {
             sensors[count].threshold = threshold;
         }
         else {
-            if (strcmp(type_buf, "temperature") == 0) {
-                sensors[count].threshold = 50.0f;
-            }
-            else {
-                sensors[count].threshold = 80.0f;
-            }
+            sensors[count].threshold = (strcmp(type_buf, "temperature") == 0) ? 50.0f : 80.0f;
         }
 
-        if (period >= 1) {
-            sensors[count].period = period;
-        }
-        else {
-            sensors[count].period = 1;
-        }
-
+        sensors[count].period = (period >= 1) ? period : 1;
         sensors[count].lastTime = 0;
 
         count++;
     }
 
     fclose(f);
-    *numSensors = count; 
+    *numSensors = count;
     return 0;
 }
 
@@ -79,36 +76,27 @@ float receiveData(int sensorID) {
     }
 
     if (r < 20) {
-        int sign;
-        if (rand() % 2 == 0) {
-            sign = 1;   
-        }
-        else {
-            sign = -1; 
-        }
-
+        int sign = (rand() % 2 == 0) ? 1 : -1;
         float gia_tri_bat_thuong = (float)(sign * (100 + rand() % 101));
         return gia_tri_bat_thuong;
     }
 
-    // Chuyển rand() về float trong dải [0.00, 100.00]
+    /* phân bố đều 0.00..100.00 */
     float gia_tri_ngau_nhien = ((float)rand() / (float)RAND_MAX) * 100.0f;
     return gia_tri_ngau_nhien;
 }
 
-/* kiểm tra thời điểm gửi data*/
+/* kiểm tra thời điểm gửi data */
 int TimetoSendData(Sensor* s) {
     if (s == NULL) return 0;
 
     time_t now = time(NULL);
 
-    // Lần đầu khởi động máy
     if (s->lastTime == 0) {
         s->lastTime = now;
         return 1;
     }
 
-    // Kiểm tra đã đủ period
     if (difftime(now, s->lastTime) >= (double)s->period) {
         s->lastTime = now;
         return 1;
@@ -117,9 +105,9 @@ int TimetoSendData(Sensor* s) {
     return 0;
 }
 
-/* kiểm tra mất kết nối*/
+/* kiểm tra mất kết nối */
 int isSensorDisconnected(Sensor s) {
     if (s.id < 0) return 1;
-    if ((rand() % 10000) == 0) return 1; 
+    if ((rand() % 10000) == 0) return 1;
     return 0;
 }
