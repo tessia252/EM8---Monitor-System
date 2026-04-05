@@ -8,7 +8,15 @@ void initStats(Stats *s){
 	s->bufferOverflowCount = 0;
 	s->disconnectCount = 0;
 }
-void updateStats(Stats *s, float value){}
+void updateStats(Stats *s, float value){
+    if(value <= -9999.0f){
+        recordError(s);
+    }
+    else{
+        recordValid(s);
+    }
+
+}
 void recordValid(Stats *s){
 	s->validCount++;
 }
