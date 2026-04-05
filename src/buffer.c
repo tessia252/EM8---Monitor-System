@@ -23,10 +23,10 @@ int pushBuffer(Buffer *b, float Value){
 }
 int popBuffer(Buffer *b,float *Value){
 	if (isBufferEmpty(b)){
-		return 0 // khong co du lieu de lay
+		return 0; // khong co du lieu de lay
 	}
 	*Value = b->data[b->head];
 	b->head = ((b->head)+1) % BUFFER_SIZE;
 	b->count--;
-	return 1
+	return 1;
 }
