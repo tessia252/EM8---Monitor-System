@@ -1,0 +1,11 @@
+# ID  Type	   Threshold  Period  Location
+1     temperature  40.0	      5       Phong_1
+2     humidity     70.0       5       Phong_1
+3     temperature  38.0       3       Phong_2
+4     humidity     75.0       5       Phong_2
+5     temperature  36.0       3       Phong_3
+6     humidity     80.0       5       Phong_3
+7     temperature  40.0       5       Phong_4
+8     humidity     70.0       3       Phong_4
+9     temperature  35.0       5       Phong_5
+10    humidity     73.0       3       Phong_5					 
