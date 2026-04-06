@@ -73,7 +73,7 @@ float receiveData(int sensorID, const char* type) {
     return ERROR_VALUE;
 }
 
-/* Kiem tra da den luc gui du lieu chua */
+/* Kiem tra da thoi diem gui du lieu chua */
 int TimetoSendData(Sensor* s) {
     if (s == NULL) return 0;
 
@@ -87,7 +87,7 @@ int TimetoSendData(Sensor* s) {
     return 0;
 }
 
-/* Kiem tra cam bien co bi mat ket noi khong */
+/* Kiem tra cam bien bi mat ket noi */
 int isSensorDisconnected(Sensor s) {
     if (s.id < 0) return 1;
     if ((rand() % 100) == 0) return 1;
