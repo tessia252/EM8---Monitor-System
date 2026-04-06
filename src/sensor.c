@@ -5,9 +5,9 @@
 #include <string.h>
 #include <time.h>
 
-#define ERROR_VALUE -9999.0f
+#define ERROR_VALUE      -9999.0f
 
-/* Đọc config từ file */
+/* Doc config tu file */
 int readConfig(const char* filename, Sensor sensors[], int* numSensors) {
     FILE* f = fopen(filename, "r");
     if (f == NULL) {
@@ -24,12 +24,15 @@ int readConfig(const char* filename, Sensor sensors[], int* numSensors) {
 
         int id, period;
         float threshold;
-        char type_buf[20], loc_buf[30];
+        char type_buf[20] = { 0 };
+        char loc_buf[30] = { 0 };
 
-        int so_truong = sscanf(line, "%d %99s %f %d %9s",
+        int thong_so = sscanf(line, "%d %19s %f %d %29s",
             &id, type_buf, &threshold, &period, loc_buf);
 
-        if (so_truong != 5) continue;
+        if (thong_so != 5) continue;
+        if (threshold < 0)  continue;
+        if (period <= 0)    continue;
 
         if (strcmp(type_buf, "temperature") != 0 &&
             strcmp(type_buf, "humidity") != 0) continue;
@@ -50,30 +53,27 @@ int readConfig(const char* filename, Sensor sensors[], int* numSensors) {
     return 0;
 }
 
-/* Sinh dữ liệu ngẫu nhiên giả lập cảm biến */
+/* Sinh du lieu ngau nhien gia lap cam bien */
 float receiveData(int sensorID, const char* type) {
     (void)sensorID;
-    int r = rand() % 10;
+    int r = rand() % 100;
 
-    /* 1/10 trả về lỗi */
-    if (r == 0) {
-        return ERROR_VALUE;
-    }
-
+    if (r == 0) return ERROR_VALUE;       
+    
     if (strcmp(type, "temperature") == 0) {
-        if (r == 1) return (float)(60 + rand() % 41);  /* 60..100 °C bất thường */
-        return (float)(15 + rand() % 26);              /* 15..40 °C  bình thường */
+        if (r == 1) return (float)(60 + rand() % 41);  /* 60..100 °C bat thuong */
+        return (float)(15 + rand() % 26);              /* 15..40  °C binh thuong */
     }
 
     if (strcmp(type, "humidity") == 0) {
-        if (r == 1) return (float)(95 + rand() % 6);   /* 95..100 %  bất thường */
-        return (float)(30 + rand() % 51);              /* 30..80 %   bình thường */
+        if (r == 1) return (float)(95 + rand() % 6);   /* 95..100 % bat thuong  */
+        return (float)(30 + rand() % 51);              /* 30..80  % binh thuong */
     }
 
     return ERROR_VALUE;
 }
 
-/* Kiểm tra đã đến lúc gửi dữ liệu chưa */
+/* Kiem tra da den luc gui du lieu chua */
 int TimetoSendData(Sensor* s) {
     if (s == NULL) return 0;
 
@@ -87,8 +87,9 @@ int TimetoSendData(Sensor* s) {
     return 0;
 }
 
-/* Kiểm tra cảm biến có bị mất kết nối không */
+/* Kiem tra cam bien co bi mat ket noi khong */
 int isSensorDisconnected(Sensor s) {
     if (s.id < 0) return 1;
+    if ((rand() % 100) == 0) return 1;
     return 0;
 }
