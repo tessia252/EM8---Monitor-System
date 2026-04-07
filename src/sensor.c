@@ -7,7 +7,6 @@
 
 #define ERROR_VALUE      -9999.0f
 
-/* Doc config tu file */
 int readConfig(const char* filename, Sensor sensors[], int* numSensors) {
     FILE* f = fopen(filename, "r");
     if (f == NULL) {
@@ -53,7 +52,6 @@ int readConfig(const char* filename, Sensor sensors[], int* numSensors) {
     return 0;
 }
 
-/* Sinh du lieu ngau nhien gia lap cam bien */
 float receiveData(int sensorID, const char* type) {
     (void)sensorID;
     int r = rand() % 100;
@@ -61,19 +59,18 @@ float receiveData(int sensorID, const char* type) {
     if (r == 0) return ERROR_VALUE;       
     
     if (strcmp(type, "temperature") == 0) {
-        if (r == 1) return (float)(60 + rand() % 41);  /* 60..100 °C bat thuong */
-        return (float)(15 + rand() % 26);              /* 15..40  °C binh thuong */
+        if (r == 1) return (float)(60 + rand() % 41);  
+        return (float)(15 + rand() % 26);              
     }
 
     if (strcmp(type, "humidity") == 0) {
-        if (r == 1) return (float)(95 + rand() % 6);   /* 95..100 % bat thuong  */
-        return (float)(30 + rand() % 51);              /* 30..80  % binh thuong */
+        if (r == 1) return (float)(95 + rand() % 6);   
+        return (float)(30 + rand() % 51);              
     }
 
     return ERROR_VALUE;
 }
 
-/* Kiem tra thoi diem gui du lieu */
 int TimetoSendData(Sensor* s) {
     if (s == NULL) return 0;
 
@@ -87,7 +84,6 @@ int TimetoSendData(Sensor* s) {
     return 0;
 }
 
-/* Kiem tra cam bien bi mat ket noi */
 int isSensorDisconnected(Sensor s) {
     if (s.id < 0) return 1;
     if ((rand() % 100) == 0) return 1;
