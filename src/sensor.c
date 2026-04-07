@@ -73,7 +73,7 @@ float receiveData(int sensorID, const char* type) {
     return ERROR_VALUE;
 }
 
-/* Kiem tra da thoi diem gui du lieu chua */
+/* Kiem tra thoi diem gui du lieu */
 int TimetoSendData(Sensor* s) {
     if (s == NULL) return 0;
 
